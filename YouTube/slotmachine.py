@@ -1,4 +1,6 @@
 # Gambling = bad  https://youtu.be/th4OBktqK1I
+
+# WARNING: THIS SLOT MACHINE IS BROKEN
 import random
 
 MAX_LINES = 3
