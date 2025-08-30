@@ -9,7 +9,7 @@ import json
 try:
     with open("leaderboard.json", "r") as f:
         leaderboard = json.load(f)
-except:
+except (FileNotFoundError, json.JSONDecodeError):
     leaderboard = []
 
 hp = 100
@@ -81,9 +81,9 @@ choices = {
 def menu():
     print("\n Planet Jumper: Mercy of Dice \n\n  [1] Enter the Spaceship\n  [2] View Emperors\n  [3] Chicken out ")
     while True:
-        menu = input("\n Choose an option: ")
-        if menu in choices:
-            choices[menu]()
+        menu1 = input("\n Choose an option: ")
+        if menu1 in choices:
+            choices[menu1]()
             break
         else:
             print("You don't have free will, choose one of the options above.")
