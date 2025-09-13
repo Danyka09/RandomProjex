@@ -1,11 +1,10 @@
 # This is a choice based adventure game called "Planet Jumper:Mercy of Dice".
 # It is my first ever project made without  a tutorial
 # the first bit of code was written: 27.08.2025 and this project was finished: __.__.2025
-# A total of __hours and __minutes have been put in. 04:17:51(excluding the creative part)
+# A total of __hours and __minutes have been put in. 05:47:35(excluding the creative part)
 import time
 import random
 import json
-from random import choices
 
 try:
     with open("leaderboard.json", "r") as f:
@@ -19,9 +18,12 @@ insult = ["idiot", "loser", "bitch", "punk", "dingus", "dipshit", "wimp", "seawe
 
 start_time = time.time()
 hp = 100
-healing = 30
 name = ""
 dice_total = 0
+enemy_hp = 0
+
+def speak(text):
+    input(text)
 
 def clear_screen():
     print("\n" * 10)
@@ -47,22 +49,85 @@ def choice():
             print(f"Invalid choice, try again, {random_insult()}")
 
 inventory = {
-    "heal": 3,
-    "arrows": 0,
-    "pensword": 0,
-    "lasergun": 0
+    "heal": {"count": 3, "healing": 30},
+    "arrows": {"count": 0, "damage": 30},
+    "pensword": {"count": 0, "damage": 50, "healing": 30, "boss_only": True},
+    "lasergun": {"count": 0, "damage": 30}
 }
-
+#1,2 is player taking damage, the rest is enemy taking damage
 roll_damage = {
     1: -20,
-    2: -5,
-    3: +10,
-    4: +25,
-    5: +30,
-    6: +40
+    2: -10,
+    3: -10,
+    4: -25,
+    5: -30,
+    6: -40
 }
+def turn():
+    while True:
+        choices = {
+            "1": attack,
+            "2": heal,
+            "3": items,
+            "4": chicken_out
+        }
+        print(f"What do you want to do, {name}?")
+        print("\n  [1] Attack\n  [2] Heal\n  [3] View Items\n  [4] Give up")
+        turn1 = input("\n Choose an option: ")
+        if turn1 in choices:
+            choices[turn1]()
+            break
+        else:
+            print("You don't have free will, choose one of the options above.")
 
-def opt_one():
+def attack():
+    global hp, enemy_hp
+    roll = dice_roll()
+    print("You decided to attack")
+    time.sleep(0.5)
+    effect = roll_damage[roll]
+    if roll<=2:
+        hp += effect
+    else:
+        enemy_hp += effect
+    print(f"You rolled {roll}. The effect was {effect}. Your health is now {hp}. The enemies health is {enemy_hp}")
+    if hp<=0:
+        print(f"I though you'd last longer, {random_insult()}")
+    if enemy_hp<=0:
+        print("Damn, you actually did it. I thought you'd die. Good for you i guess...")
+    else:
+        turn()
+
+def heal():
+    print()
+def items():
+    print()
+
+def apollo():
+    global enemy_hp
+    enemy_hp = 100
+    input("Press Enter for more text")
+    clear_screen()
+    speak("The ship enters into warp drive, distorting the space around to travel faster than the speed of light.")
+    speak("A couple hours pass by and you see a small planet, green and full of oceans like the earth.")
+    speak("You have arrived to your first destination, Planet Apollo.")
+    speak("The planet of archers, colonized 1000 years ago by a past human civilization, currently lead by Katniss Everdeen. ")
+    speak("This planet has the most masterfully crafted bows in the universe which is why you are here,")
+    speak("to get one for your fight against the Emperor.")
+    speak("You walk into the capitol, everyone has brightly colored hair and stares at you as you walk to the city center.")
+    speak("You find the leader, Katniss Everdeen outside.")
+    speak("You announce your intention to obtain a bow but she says that she doesn’t give them to weak bitches. ")
+    speak("You will need to fight.")
+    speak(f"You take out your magic die and roll it on the floor. The crowd holds their breath.")
+    attack()
+
+def groverland():
+    print()
+
+def delta():
+    print()
+
+def enter_spaceship():
     global name
     print(f"You decided to Enter the Spaceship ")
     time.sleep(1)
@@ -83,14 +148,14 @@ def opt_one():
         print("1...")
         time.sleep(1)
         print("🚀🚀🚀")
+        apollo()
     else:
         print(f"Of course now you bail {random_insult()}")
         time.sleep(1)
 
-
-def opt_two():
+def opt_leaderboard():
     global leaderboard
-    sorted_list = sorted(leaderboard, key=lambda x: x["score"], reverse=True)
+    sorted_list = sorted(leaderboard, key=lambda x: x["score"], reverse=True)[:9]
     print(f"You chose to view the Emperors")
     time.sleep(0.5)
     print ("\n      Leaderboard 🏆")
@@ -102,20 +167,19 @@ def opt_two():
     clear_screen()
     menu()
 
-def opt_three():
+def chicken_out():
     print(f"You chose to chicken out")
     time.sleep(0.5)
     print(random_insult())
     time.sleep(5)
     quit()
 
-choices = {
-    "1": opt_one,
-    "2": opt_two,
-    "3": opt_three
-}
-
 def menu():
+    choices = {
+        "1": enter_spaceship,
+        "2": opt_leaderboard,
+        "3": chicken_out
+    }
     print("\n Planet Jumper: Mercy of Dice \n\n  [1] Enter the Spaceship\n  [2] View Emperors\n  [3] Chicken out ")
     while True:
         menu1 = input("\n Choose an option: ")
@@ -124,31 +188,6 @@ def menu():
             break
         else:
             print("You don't have free will, choose one of the options above.")
-
-def apollo():
-    print("The ship enters into warp drive, distorting the space around to travel faster than the speed of light.")
-    time.sleep(5)
-    print("A couple hours pass by and you see a small planet, green and full of oceans like the earth.")
-    time.sleep(4)
-    print("You have arrived to your first destination, Planet Apollo.")
-    time.sleep(3)
-    print("The planet of archers, colonized 1000 years ago by a past human civilization, currently lead by Katniss Everdeen. ")
-    time.sleep(5)
-    print("This planet has the most masterfully crafted bows in the universe which is why you are here,")
-    time.sleep(4)
-    print("to get one for your fight against the Emperor.")
-    time.sleep(3)
-    print( "You land on the planet and look around. You see beautiful green fields full of flowers and lush forests in the distance.")
-    time.sleep(6)
-    print("You walk into the capitol, everyone has brightly colored hair and stares at you as you walk to the city center.")
-    time.sleep(5.5)
-    print("You find the leader, Katniss Everdeen outside.")
-    time.sleep(3.5)
-    print("You announce your intention to obtain a bow but she says that she doesn’t give them to weak bitches. ")
-    time.sleep(5)
-    print("You will need to fight.")
-    time.sleep(2)
-    print(f"You take out your magic die and roll it on the floor. The crowd holds their breath. You roll the number:")
 
 menu()
 
