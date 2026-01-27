@@ -1,6 +1,7 @@
 #import functions_framework
 import requests
 import os
+from datetime import date
 #weather
 import openmeteo_requests
 import pandas as pd
@@ -47,7 +48,7 @@ def nasa():
         title = nasa_json.get('title')
         return image_url, explanation_text, title
     except Exception as e:
-        return  "https://as2.ftcdn.net/v2/jpg/02/51/95/53/1000_F_251955356_FAQH0U1y1TZw3ZcdPGybwUkH90a3VAhb.jpg", f"API is unavailable because {e}", "Nasa probably got hit by a meteor"
+        return  f"{github_url}/no_image.jpg", f"API is unavailable because {e}", "Nasa probably got hit by a meteor"
 
 def cat_facts():
     #gets cat facts
@@ -80,7 +81,7 @@ def weather():
     params = {
         "latitude": 48.5939,
         "longitude": 20.6745,
-        "hourly": ["temperature_2m", "apparent_temperature", "precipitation"],
+        "hourly": ["temperature_2m", "apparent_temperature", "precipitation", "weather_code"],
         "current": ["is_day", "weather_code"],
         "timezone": "Europe/Berlin",
         "forecast_days": 1,
@@ -108,6 +109,7 @@ def weather():
     hourly_temperature_2m = hourly.Variables(0).ValuesAsNumpy()
     hourly_apparent_temperature = hourly.Variables(1).ValuesAsNumpy()
     hourly_precipitation = hourly.Variables(2).ValuesAsNumpy()
+    hourly_weather_codes = hourly.Variables(3).ValuesAsNumpy()
 
     hourly_data = {"date": pd.date_range(
         start=pd.to_datetime(hourly.Time() + response.UtcOffsetSeconds(), unit="s", utc=True),
@@ -119,22 +121,44 @@ def weather():
     hourly_data["temperature_2m"] = hourly_temperature_2m
     hourly_data["apparent_temperature"] = hourly_apparent_temperature
     hourly_data["precipitation"] = hourly_precipitation
+    hourly_data["weather_code"] = hourly_weather_codes
 
     hourly_dataframe = pd.DataFrame(data=hourly_data)
     print("\nHourly data\n", hourly_dataframe)
 
-    filename = weather_icon.get(current_weather_code, "/0.png")
-    icon_url = f"{github_url}{filename}"
-    return hourly_temperature_2m[7], hourly_temperature_2m[10], icon_url
+    row_7_9 = [
+        hourly_temperature_2m[7:10].mean(),
+        hourly_apparent_temperature[7:10].mean(),
+        hourly_precipitation[7:10].mean(),
+        f"{github_url}{weather_icon.get(int(hourly_weather_codes[8]), '/no_image.jpg')}"
+    ]
+    row_10_13 = [
+        hourly_temperature_2m[10:14].mean(),
+        hourly_apparent_temperature[10:14].mean(),
+        hourly_precipitation[10:14].mean(),
+        f"{github_url}{weather_icon.get(int(hourly_weather_codes[12]), '/no_image.jpg')}"
+    ]
+    row_14_16 = [
+        hourly_temperature_2m[14:17].mean(),
+        hourly_apparent_temperature[14:17].mean(),
+        hourly_precipitation[14:17].mean(),
+        f"{github_url}{weather_icon.get(int(hourly_weather_codes[15]), '/no_image.jpg')}"
+    ]
+    row_17_20 = [
+        hourly_temperature_2m[17:21].mean(),
+        hourly_apparent_temperature[17:21].mean(),
+        hourly_precipitation[17:21].mean(),
+        f"{github_url}{weather_icon.get(int(hourly_weather_codes[18]), '/no_image.jpg')}"
+    ]
 
-#def weather_test():
+    return row_7_9, row_10_13, row_14_16, row_17_20
 
 def email():
     #email looks and sending
     image_url, explanation_text, title = nasa()
     cat_fact = cat_facts()
     fox = fox_pics()
-    weather_temp7, weather_temp10, icon_url = weather()
+    row_7_9, row_10_13, row_14_16, row_17_20 = weather()
     HOST = "smtp.gmail.com"
     PORT = 587
 
@@ -150,7 +174,7 @@ def email():
     html = f"""
     <html>
         <body>
-            <h1>Daily Report</h1>
+            <h1>Daily Report: {date.today().strftime("%B %d, %Y")}</h1>
             <h2>NASA Image: {title}</h2>
             <img src="{image_url}" alt="NASA APOD" style="max-width: 100%; border-radius: 10px;">
             <p> {explanation_text}
@@ -158,16 +182,43 @@ def email():
             <p>{cat_fact}</p>
             <h2> FOX!!! </h2>
             <img src="{fox}">
-            <table border="2">
+            <table border="2" cellpadding="10" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 18px; width: 100%; max-width: 600px;">
                 <tr>
-                    <td>{weather_temp7:.2f}°C</td>
-                    <td>{weather_temp10:.2f}°C</td>
-                    <td>
-                        <img src="{icon_url}" alt="Weather icon" style="width: 50px; height: auto;">
-                    </td>
+                    <th> Time </th>
+                    <th> Tempature </th>
+                    <th> Feels like </th>
+                    <th> Precipitation </th>
+                    <th> Icon </th>
                 </tr>
-            </table>
-            <p></p>
+                <tr>
+                    <th> 07-09 </th>
+                    <td>{row_7_9[0]:.2f}°C</td>
+                    <td>{row_7_9[1]:.2f}°C</td>
+                    <td>{row_7_9[2]:.2f}mm</td>
+                    <td><img src="{row_7_9[3]}" style="width: 50px; height: auto;"></td>
+                </tr>
+                <tr>
+                    <th> 10-13 </th>
+                    <td>{row_10_13[0]:.2f}°C</td>
+                    <td>{row_10_13[1]:.2f}°C</td>
+                    <td>{row_10_13[2]:.2f}mm</td>
+                    <td><img src="{row_10_13[3]}" style="width: 50px; height: auto;"></td>
+                </tr>
+                <tr>
+                    <th> 14-16 </th>
+                    <td>{row_14_16[0]:.2f}°C</td>
+                    <td>{row_14_16[1]:.2f}°C</td>
+                    <td>{row_14_16[2]:.2f}mm</td>
+                    <td><img src="{row_14_16[3]}" style="width: 50px; height: auto;"></td>
+                </tr>
+                <tr>
+                    <th> 17-20 </th>
+                    <td>{row_17_20[0]:.2f}°C</td>
+                    <td>{row_17_20[1]:.2f}°C</td>
+                    <td>{row_17_20[2]:.2f}mm</td>
+                    <td><img src="{row_17_20[3]}" style="width: 50px; height: auto;"></td>
+                </tr>
+                </table>
         </body>
     </html>
     """
