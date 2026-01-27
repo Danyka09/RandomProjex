@@ -107,7 +107,6 @@ def apollo():
     global enemy_hp
     enemy_hp = 100
     input("Press Enter for more text")
-    clear_screen()
     speak("The ship enters into warp drive, distorting the space around to travel faster than the speed of light.")
     speak("A couple hours pass by and you see a small planet, green and full of oceans like the earth.")
     speak("You have arrived to your first destination, Planet Apollo.")
@@ -115,10 +114,10 @@ def apollo():
     speak("This planet has the most masterfully crafted bows in the universe which is why you are here,")
     speak("to get one for your fight against the Emperor.")
     speak("You walk into the capitol, everyone has brightly colored hair and stares at you as you walk to the city center.")
-    speak("You find the leader, Katniss Everdeen outside.")
+    speak("You find the leader, Katniss Everdeen outside, taking in the smell of the flowers.")
     speak("You announce your intention to obtain a bow but she says that she doesn’t give them to weak bitches. ")
     speak("You will need to fight.")
-    speak(f"You take out your magic die and roll it on the floor. The crowd holds their breath.")
+    speak(f"You take out your magic die and roll it on the floor. The crowd of people formed around you holds their breath.\n")
     attack()
 
 def groverland():

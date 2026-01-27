@@ -28,7 +28,7 @@
 
 * [ ] Describe planet + enemy (satyrs + demigods)
 * [ ] Combat loop (D6 system again)
-* [ ] On victory → reward ✒️ **PenSword** (boss-only, 3× dmg, heal 25 HP, single use)
+* [ ] On victory → reward ✒️ **Riptide** (boss-only, 3× dmg, heal 25 HP, single use)
 
 ---
 
@@ -44,7 +44,7 @@
 
 * [ ] Decide **which boss to load**:
 
-  * If leaderboard empty → Boss = Zlorg (200 HP)
+  * If leaderboard empty → Boss = Vecna or mindflayer, smth stranger things (200 HP)
   * Else → Boss = Current Emperor (top leaderboard entry, HP 200, Attack \~20)
 * [ ] Describe boss intro (Zlorg vs. Player Emperor flavor text)
 * [ ] Fight loop:
@@ -54,7 +54,7 @@
 * [ ] Items work as follows:
 
   * 🎯 Bow → 2× damage, 2 uses
-  * ✒️ PenSword → 3× damage + heal 25, 1 use, boss only
+  * ✒️ Riptide → 3× damage + heal 25, 1 use, boss only
   * 🔫 Laser Gun → 40 dmg, −5 HP, 3 uses
   * Potions → +30 HP, 3 uses at start
 
