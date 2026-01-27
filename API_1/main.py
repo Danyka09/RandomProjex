@@ -163,7 +163,7 @@ def email():
                     <td>{weather_temp7:.2f}°C</td>
                     <td>{weather_temp10:.2f}°C</td>
                     <td>
-                        <img src="{icon_url}" alt="Weather icon" style="width: 50px; height: auto;>
+                        <img src="{icon_url}" alt="Weather icon" style="width: 50px; height: auto;">
                     </td>
                 </tr>
             </table>
