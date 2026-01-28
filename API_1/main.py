@@ -204,7 +204,7 @@ def email():
                     <td>{row_10_13[2]:.2f}mm</td>
                     <td><img src="{row_10_13[3]}" style="width: 50px; height: auto;"></td>
                 </tr>
-                <tr>
+                <tr>    
                     <th> 14-16 </th>
                     <td>{row_14_16[0]:.2f}°C</td>
                     <td>{row_14_16[1]:.2f}°C</td>
