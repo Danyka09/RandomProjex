@@ -26,12 +26,12 @@ print(f"Ninja speed: {ninja.speed}\n")
 # after = is the variable that stores the value
 
 """ CLASS INHERITANCE """
-# everything from parent class gets inherited into child class; example: everything in character class is also is warrior class
+# everything from parent class gets inherited into child class; example: everything in character class is also in warrior class,
 # but we can now add child class specific parameters.
 
 class Warrior(Character):
     def __init__(self, health, damage, speed, luck): # we add new attributes here but first copy the old ones
-        super().__init__(health, damage, speed) # super is current classes parent class; this is how we pass parameters from parent to child class; necessary so it doesnt override.
+        super().__init__(health, damage, speed) # super is current classes parent class; this is how we pass parameters from parent to child class; necessary so it doesn't override.
         self.luck = luck
         self.toughness_modifier = 0.90
     def take_damage(self, amount): # amount comes from original parent method (function)
