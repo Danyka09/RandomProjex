@@ -1,8 +1,8 @@
 import functools
+
+import numpy as np
 import requests
-from geopy.geocoders import Nominatim
 import os
-import json
 from datetime import date
 from pathlib import Path
 #email
@@ -124,10 +124,10 @@ def weather_api():
 
     # Process first location. Add a for-loop for multiple locations or weather models
     response = responses[0]
-    print(f"Coordinates: {response.Latitude()}°N {response.Longitude()}°E")
-    print(f"Elevation: {response.Elevation()} m asl")
-    print(f"Timezone: {response.Timezone()}{response.TimezoneAbbreviation()}")
-    print(f"Timezone difference to GMT+0: {response.UtcOffsetSeconds()}s")
+    # print(f"Coordinates: {response.Latitude()}°N {response.Longitude()}°E")
+    # print(f"Elevation: {response.Elevation()} m asl")
+    # print(f"Timezone: {response.Timezone()}{response.TimezoneAbbreviation()}")
+    # print(f"Timezone difference to GMT+0: {response.UtcOffsetSeconds()}s")
 
     # Process hourly data. The order of variables needs to be the same as requested.
     hourly = response.Hourly()
@@ -151,18 +151,74 @@ def weather_api():
     hourly_data["weather_code"] = hourly_weather_code
 
     hourly_dataframe = pd.DataFrame(data = hourly_data)
-    print("\nHourly data\n", hourly_dataframe)
-    print(hourly_precipitation)
-    print(hourly_relative_humidity_2m)
-    print(hourly_apparent_temperature)
-    print(hourly_temperature_2m)
-    print(hourly_weather_code)
+    # print("\nHourly data\n", hourly_dataframe)
+    # print(hourly_precipitation)
+    # print(hourly_relative_humidity_2m)
+    # print(hourly_apparent_temperature)
+    # print(hourly_temperature_2m)
+    # print(hourly_weather_code)
+
+    ######################## so like this stuff is unnecesary but atleast i learnt
+    # temp = []
+    # feel_temp = []
+    # precitipation = []
+    # humidity = []
+    # code = []
+    #
+    # for x in hourly_temperature_2m: # x is each item in the list and after in is the actual list so x is index 0, 1, 2 etc after every loop. and then we convert to a float and append it to a new list thats outside the loop the store the data
+    #     tempature = float(x)
+    #     temp.append(tempature) # can also do temp.append(float(x))
+    #
+    # for x in hourly_apparent_temperature:
+    #     tempature = float(x)
+    #     feel_temp.append(tempature)
+    #
+    # for x in hourly_precipitation:
+    #     y = float(x)
+    #     precitipation.append(y)
+    #
+    # for x in hourly_relative_humidity_2m:
+    #     y = float(x)
+    #     humidity.append(y)
+    #
+    # for x in hourly_weather_code:
+    #     y = int(x)
+    #     code.append(y)
+
+    #basically what the ai did first time but no i got it myself (claude helped with understanding loops but this is me 🦾 (also with .mean)
+    row_07_09 = [float(np.mean(hourly_temperature_2m[7:10])),
+                 float(np.mean(hourly_apparent_temperature[7:10])),
+                 float(np.mean(hourly_precipitation[7:10])),
+                 float(np.mean(hourly_relative_humidity_2m[7:10])),
+                 github_url + weather_icon[hourly_weather_code[8]]]
+
+    row_10_13 = [float(np.mean(hourly_temperature_2m[10:14])), # ALT + J for multiple select
+                 float(np.mean(hourly_apparent_temperature[10:14])),
+                 float(np.mean(hourly_precipitation[10:14])),
+                 float(np.mean(hourly_relative_humidity_2m[10:14])),
+                 f"{github_url}{weather_icon[int(hourly_weather_code[12])]}"]
+
+    row_14_16 = [float(np.mean(hourly_temperature_2m[14:17])),
+                 float(np.mean(hourly_apparent_temperature[14:17])),
+                 float(np.mean(hourly_precipitation[14:17])),
+                 float(np.mean(hourly_relative_humidity_2m[14:17])),
+                 f"{github_url}{weather_icon[hourly_weather_code[15]]}"]
+
+    row_17_20 = [float(np.mean(hourly_temperature_2m[17:21])),
+                 float(np.mean(hourly_apparent_temperature[17:21])),
+                 float(np.mean(hourly_precipitation[17:21])),
+                 float(np.mean(hourly_relative_humidity_2m[17:21])),
+                 github_url + weather_icon[hourly_weather_code[18]]]
+
+    return row_07_09, row_10_13, row_14_16, row_17_20
 
 @error_handling
 def email():
     spacex_img = spacex_api()[0]
     spacex_landing_message = spacex_api()[1]
     spacex_video = spacex_api()[2]
+
+    w7, w10, w14, w17 = weather_api()
 
     iss_longitude, iss_latitude = iss_api()
 
@@ -181,10 +237,10 @@ def email():
     message['To'] = TO_EMAIL
 
     html_path= Path(r"C:\Users\dsebo\Desktop\Google Backup\coding\python\RandomProjex\API_2\html.html")
+
     #use r so that it treats it as plain text cause \ mean stuff in python like \n ...
-    html = (html_path.read_text()).format(img = spacex_img, message = spacex_landing_message, video = spacex_video, long = iss_longitude, lat = iss_latitude, usd = usd, czk = czk, huf = huf)
-    # since we are reading the html from outside we cant use an f string, so we use .format() and add the variables as an argument and in the html it still goes
-    # in the {curly brackets}, this has the benefit of being able to change the var to something more simple ig
+    html = (html_path.read_text()).format(img = spacex_img, message = spacex_landing_message, video = spacex_video, long = iss_longitude, lat = iss_latitude, usd = usd, czk = czk, huf = huf, w7 = w7, w10 = w10, w14 = w14, w17 = w17)
+    # since we are reading the html from outside we cant use an f string, so we use .format() and add the variables as an argument and in the html it still goes in the {curly brackets}, this has the benefit of being able to change the var to something more simple ig.      to format the decimals we just do it in the html file directly
 
     html_part =  MIMEText(html, 'html')
     message.attach(html_part)
@@ -201,3 +257,5 @@ def email():
 
     smtp.sendmail(FROM_EMAIL, TO_EMAIL, message.as_string())
     smtp.quit()
+
+email()
