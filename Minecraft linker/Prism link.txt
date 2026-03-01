@@ -1,0 +1,6 @@
+mklink /J "C:\Path\To\Prism\instances\YourInstance\.minecraft\saves" "C:\Users\Name\AppData\Roaming\.minecraft\saves"
+
+
+mklink /J "C:\Users\dsebo\AppData\Roaming\PrismLauncher\instances\==========\minecraft\saves" "C:\Users\dsebo\AppData\Roaming\.minecraft\saves"
+
+mklink "C:\Users\dsebo\AppData\Roaming\PrismLauncher\instances\==========\minecraft\servers.dat" "C:\Users\dsebo\AppData\Roaming\.minecraft\servers.dat"
