@@ -105,6 +105,7 @@ def currency_api():
 
 @error_handling
 def weather_api():
+    # okay most of this is just the copied template. FROM HERE
     # Setup the Open-Meteo API client with cache and retry on error
     cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
     retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
@@ -184,7 +185,8 @@ def weather_api():
     # for x in hourly_weather_code:
     #     y = int(x)
     #     code.append(y)
-
+    
+    #TO HERE
     #basically what the ai did first time but no i got it myself (claude helped with understanding loops but this is me 🦾 (also with .mean)
     row_07_09 = [float(np.mean(hourly_temperature_2m[7:10])),
                  float(np.mean(hourly_apparent_temperature[7:10])),

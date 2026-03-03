@@ -1,13 +1,19 @@
-# This is a program for linking the deafult .minecraft to Prism instances
+# This is a program for linking the default .minecraft to Prism instances
 # we use mklink to link them; del for deleting files; rmdir or rd to remove folders
-# ctrl + shift + L   to select all occurences of a word
+# ctrl + shift + L   to select all occurrences of a word
 import os, ctypes, sys
+from pathlib import Path
+
+# okay this is ai help on relative paths, can think about implementing
+# Path.home() / "AppData" / "Roaming" / ".minecraft"
 
 def main():
     # the full paths; i know its not relative idk what its called but whatever idc to do it right now
-    minecraft_path = r"C:\Users\dsebo\AppData\Roaming\.minecraft"
+    # minecraft_path = r"C:\Users\dsebo\AppData\Roaming\.minecraft"
+    minecraft_path = Path.home() / "AppData" / "Roaming" / ".minecraft" #claude
     instance_name= input("Please enter the exact instance name: ")
-    prism_path = rf"C:\Users\dsebo\AppData\Roaming\PrismLauncher\instances\{instance_name}\minecraft"
+    prism_path = Path.home() / "AppData" / "Roaming" / "PrismLauncher" / "instances" / instance_name / "minecraft" #claude
+    # prism_path = rf"C:\Users\dsebo\AppData\Roaming\PrismLauncher\instances\{instance_name}\minecraft"
 
     # the specific commands
     link_folders = r"mklink /J"
@@ -54,3 +60,5 @@ if is_admin():
 else:
     # Re-run the program with admin rights
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, '"' + " ".join(sys.argv) + '"', None, 1)
+
+input()
