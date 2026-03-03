@@ -2,6 +2,7 @@
 # It is my first ever project made without  a tutorial
 # the first bit of code was written: 27.08.2025 and this project was finished: __.__.2025
 # A total of __hours and __minutes have been put in. 05:47:35(excluding the creative part)
+#Take this with a grain of salt cause a lot of this was ai, but i understand it all i think except for the leaderboard.
 import time
 import random
 import json
@@ -12,8 +13,8 @@ try:
 except (FileNotFoundError, json.JSONDecodeError):
     leaderboard = []
 
-choices_yes = ["yes", "yea", "yeah", "yepp", "yep", "y", "yo", "sure", "yas", "ya", "yah", "ye"]
-choices_no = ["no", "nah", "nein", "nope", "nae", "n"]
+choices_yes = ["yes", "yea", "yeah", "yepp", "yep", "y", "yo", "sure", "yas", "ya", "yah", "ye", "ano", "jo", "igen"]
+choices_no = ["no", "nah", "nein", "nope", "nae", "n", "nem", "nie"]
 insult = ["idiot", "loser", "bitch", "punk", "dingus", "dipshit", "wimp", "seaweed brain", "kelp head", "Picklehead", "noodlebrain"]
 
 start_time = time.time()
@@ -48,11 +49,22 @@ def choice():
         else:
             print(f"Invalid choice, try again, {random_insult()}")
 
+def score_write():
+    global end_time, hp, dice_total, start_time
+    end_time = time.time()
+    total_time = end_time - start_time
+    score = round(hp * 10 + dice_total * 3 - total_time / 10)
+
+    leaderboard.append({"name": name, "score": score})
+
+    with open("leaderboard.json", "w") as file:
+        json.dump(leaderboard, file, indent=4)
+
 inventory = {
-    "heal": {"count": 3, "healing": 30},
-    "arrows": {"count": 0, "damage": 30},
-    "pensword": {"count": 0, "damage": 50, "healing": 30, "boss_only": True},
-    "lasergun": {"count": 0, "damage": 30}
+    # "heal": {"count": 3, "healing": 30},
+    "arrows": {"count": 0, "damage": 2},
+    "riptide": {"count": 0, "damage": 3, "healing": 10},
+    "lasergun": {"count": 0, "damage": 25}
 }
 #1,2 is player taking damage, the rest is enemy taking damage
 roll_damage = {
@@ -67,12 +79,12 @@ def turn():
     while True:
         choices = {
             "1": attack,
-            "2": heal,
-            "3": items,
-            "4": chicken_out
+            # "2": heal,
+            "2": items,
+            "3": chicken_out
         }
         print(f"What do you want to do, {name}?")
-        print("\n  [1] Attack\n  [2] Heal\n  [3] View Items\n  [4] Give up")
+        print("\n  [1] Attack\n  [2] View Items\n  [3] Give up")
         turn1 = input("\n Choose an option: ")
         if turn1 in choices:
             choices[turn1]()
@@ -84,7 +96,7 @@ def attack():
     global hp, enemy_hp
     roll = dice_roll()
     print("You decided to attack")
-    time.sleep(0.5)
+    time.sleep(1)
     effect = roll_damage[roll]
     if roll<=2:
         hp += effect
@@ -92,20 +104,26 @@ def attack():
         enemy_hp += effect
     print(f"You rolled {roll}. The effect was {effect}. Your health is now {hp}. The enemies health is {enemy_hp}")
     if hp<=0:
+        time.sleep(2)
         print(f"I though you'd last longer, {random_insult()}")
+        score_write()
+        time.sleep(5)
+        quit()
     if enemy_hp<=0:
+        time.sleep(2)
         print("Damn, you actually did it. I thought you'd die. Good for you i guess...")
+        hp = min(100, hp + 30)
     else:
+        time.sleep(2)
         turn()
 
-def heal():
-    print()
 def items():
     print()
 
 def apollo():
     global enemy_hp
     enemy_hp = 100
+    
     input("Press Enter for more text")
     speak("The ship enters into warp drive, distorting the space around to travel faster than the speed of light.")
     speak("A couple hours pass by and you see a small planet, green and full of oceans like the earth.")
@@ -114,17 +132,53 @@ def apollo():
     speak("This planet has the most masterfully crafted bows in the universe which is why you are here,")
     speak("to get one for your fight against the Emperor.")
     speak("You walk into the capitol, everyone has brightly colored hair and stares at you as you walk to the city center.")
-    speak("You find the leader, Katniss Everdeen outside, taking in the smell of the flowers.")
+    speak("You find the leader, Katniss Everdeen outside, taking in the smell of white roses.")
     speak("You announce your intention to obtain a bow but she says that she doesn’t give them to weak bitches. ")
     speak("You will need to fight.")
-    speak(f"You take out your magic die and roll it on the floor. The crowd of people formed around you holds their breath.\n")
+    speak("You take out your magic die and roll it on the floor. The crowd of people formed around you holds their breath.")
+    
     attack()
 
-def groverland():
-    print()
+def groverland(): # okay the story is mine but i made ai break it down and fix grammar cause a sentence with 80 words is crazy and it also changed some wording but i like it so it stays, original is in doc
+    global enemy_hp
+    enemy_hp = 200
+    
+    # Beat 1: The Transition
+    speak("The robots beep-boop in disbelief. “You actually managed to beat us. A human of all things, so embarrassing”. They angrily give you the laser gun, rules are rules after all. And in this universe the dice rule.")
+    speak("You venture back into the ship and sigh in relief. You look at the screen and find the final planet you need to visit, Groverland. It's a planet populated by satyrs, beings that are half-goat, half-human.")
+    # Beat 2: The Lore
+    speak("A long time ago, they were the first to figure out space flight. After centuries of searching Earth for Pan, the missing god of wild, they moved to the stars.")
+    speak("Groverland was named after satyr Grover Underwood who finally found the lost god Pan right here.")
+    # Beat 3: The Legend of Percy
+    speak("Because of its beautiful nature, many demigods retire here after a life of fighting monsters.")
+    speak("The most famous is Perseus Jackson, son of Poseidon, who saved Olympus from the Titan Kronos.")
+    speak("He was offered godhood but refused. He possesses Riptide, a sword that looks like a pen. The final weapon you'll need to defeat the Emperor.")
+    # Beat 4: Arrival
+    speak("You strap in and the spaceship counts down. You fall into a deep sleep, waking up to the sight of the beautiful, green planet.")
+    speak("After walking for half an hour, mesmerized by the nature, you spot him: Percy, the bearer of Riptide.")
+    # Beat 5: The Confrontation
+    speak("You walk up to ask for the sword, thinking it will be easy since he's retired. You are mistaken.")
+    speak("Percy initiates a fight. Nobody dares to ask him for Riptide. By asking, you have heavily disrespected him.")
+    speak("This will be a tough fight. Remember: this man beat Ares, the God of War, when he was only twelve years old.")
+    # Beat 6: The Duel Begins
+    speak("You have no choice but to take out your dice. Everyone here understands the rules of the game.")
+    speak("Percy caps Riptide and pulls out his own dice; colored blue like the ocean with numbers faint yellow like sand.")
+    speak("As he stares you down, you roll your die.")
+    
+    attack()
 
-def delta():
-    print()
+def omicron():
+    global enemy_hp
+    enemy_hp = 150
+    
+    speak("You bow down to the crowd, strap the bow onto your back, and head back to your spaceship.")
+    speak("Looking at the map, you find your second destination: Omicron. A planet originally colonized by aliens for the purposes of extracting resources using robots.")
+    speak("That plan backfired a decade later when the robots gained consciousness and revolted. It now hosts an advanced robot civilization. This is where laser guns get manufactured, a weapon which is incredibly powerful.")
+    speak("As you get closer to the planet you see how enormous it is. Upon landing you see the sea of grey monotone buildings. Humans are not allowed on this planet, so you need to be careful. But you were not and they immediately found you.")
+    speak("Before following through with their typical forced execution they ask the reason for your arrival, and you mention your need for a laser gun to defeat the Emperor. They do hate humans, but they hate the Emperor even more for limiting their expansion.")
+    speak("They just hate all carbon-based life in general. However, do not be mistaken, they do not go easy on you. They strike a deal with you, if you defeat them, you get the gun, if they defeat you, they execute you like normal. You roll the dice.")
+    
+    attack()
 
 def enter_spaceship():
     global name
@@ -147,12 +201,18 @@ def enter_spaceship():
         print("1...")
         time.sleep(1)
         print("🚀🚀🚀")
+        time.sleep(1)
         apollo()
+        input()
+        omicron()
+        input()
+        groverland()
+        score_write()
     else:
         print(f"Of course now you bail {random_insult()}")
         time.sleep(1)
 
-def opt_leaderboard():
+def opt_leaderboard():  #this function is like fully ai made. i dont understand this at all
     global leaderboard
     sorted_list = sorted(leaderboard, key=lambda x: x["score"], reverse=True)[:9]
     print(f"You chose to view the Emperors")
@@ -189,26 +249,3 @@ def menu():
             print("You don't have free will, choose one of the options above.")
 
 menu()
-
-#test rolls
-print(dice_roll())
-print(dice_roll())
-print(dice_roll())
-
-end_time = time.time()
-total_time = end_time - start_time
-score = round(hp * 10 + dice_total * 3 - total_time / 10)
-
-leaderboard.append({"name":name, "score":score})
-
-with open("leaderboard.json", "w") as file:
-    json.dump(leaderboard, file, indent=4)
-
-#Test prints
-print(dice_total)
-print(start_time)
-print(end_time)
-print(total_time)
-print(name)
-print(score)
-print(random_insult())
