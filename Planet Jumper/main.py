@@ -12,8 +12,11 @@ from textwrap import fill
 try:
     with open("leaderboard.json", "r") as f:
         leaderboard = json.load(f)
+        sort = sorted(leaderboard, key=lambda x: x["score"], reverse=True)[:1]
+        emperor = (sort[0]["name"]) if sort else "Zlorg" # i dont understand the if sort else "Zlorg" part but whatever was easy to make; the sorting was just copied from the leaderboard
 except (FileNotFoundError, json.JSONDecodeError):
     leaderboard = []
+    emperor = "Zlorg"
 
 choices_yes = ["yes", "yea", "yeah", "yepp", "yep", "y", "yo", "sure", "yas", "ya", "yah", "ye", "ano", "jo", "igen"]
 choices_no = ["no", "nah", "nein", "nope", "nae", "n", "nem", "nie"]
@@ -22,7 +25,6 @@ insult = ["idiot", "loser", "bitch", "punk", "dingus", "dipshit", "wimp", "seawe
 start_time = time.time()
 hp = 100
 name = ""
-emperor = "Zlorg"
 dice_total = 0
 enemy_hp = 0
 special_score = 0
@@ -82,10 +84,10 @@ inventory = {
 roll_damage = {
     1: -20,
     2: -10,
-    3: -10,
-    4: -25,
-    5: -30,
-    6: -40
+    3: -0,
+    4: -10,
+    5: -20,
+    6: -30
 }
 def turn():
     while True:
@@ -100,6 +102,23 @@ def turn():
         turn1 = input("\n Choose an option: ")
         if turn1 in choices: # choices is the dictionary, if turn1 checks if the input matches the key
             choices[turn1]() # this gets the value of the key and calls the function
+            break
+        else:
+            print("You don't have free will, choose one of the options above.")
+
+def end_menu(Emperor):
+    time.sleep(3)
+    while True:
+        choices = {
+            "1": enter_spaceship,
+            "2": opt_leaderboard,
+            "3": quit
+        }
+        print(f"\n\n\nWhat do you want to do,{Emperor} {name}?")
+        print("\n  [1] Play Again\n  [2] View Leaderboard\n  [3] Quit")
+        turn1 = input("\n Choose an option: ")
+        if turn1 in choices:
+            choices[turn1]()
             break
         else:
             print("You don't have free will, choose one of the options above.")
@@ -124,12 +143,11 @@ def attack():
             time.sleep(2)
             print(f"I though you'd last longer, {random_insult()}")
             score_write()
-            time.sleep(5)
-            quit()
+            end_menu("")
     if enemy_hp<=0:
         time.sleep(2)
         print("You won!")
-        hp = min(100, hp + 30) # chooses the smallest number, so either 100 or whatever the value of hp + 30 is
+        hp = min(100, hp + 20) # chooses the smallest number, so either 100 or whatever the value of hp + 30 is
     else:
         time.sleep(1)
         turn()
@@ -262,22 +280,25 @@ def fight_win():
     speak("Since you beat the Emperor and presumably your score is higher than everyone elses you become the new Emperor. ")
     speak("For you see, the Emperor is whoever’s score is the highest. (And if it isn’t, don’t worry, no one has access to the scores except the Emperor, so you)")
     speak("There were possibly many before, possibly no one at all. But either way, I trust that you will finally be the one to follow your word and bring upon true change once and for all. ")
-    speak(f"Long live Emperor {name}")
-    input("\nPress enter to quit")
-    quit()
+    print(f"Long live Emperor {name}")
+    end_menu(" Emperor")
 
 def fight_loose():
     global emperor, insult
     speak("You look at the dice in horror as you see what they have landed on. ")
     speak(f"You look at Emperor {emperor} and with a final dying breath you say “Fuck you {random_insult()}”.")
     speak("You collapse and die, you get thrown outside and swallowed by the black hole. ")
-    speak(f"Well atleast you tried, {random_insult()}, maybe in a next life.")
+    speak(f"Well at least you tried, {random_insult()}, maybe in a next life.")
     speak("Long live the Emperor")
-    input("\nPress enter to quit")
-    quit()
+    end_menu("")
 
 def enter_spaceship():
-    global name
+    global hp, dice_total, special_score, start_time, at_boss, name
+    hp = 100
+    dice_total = 0
+    special_score = 0
+    start_time = time.time()
+    at_boss = False
     print(f"You decided to Enter the Spaceship ")
     time.sleep(1)
     name = input("What would you like to be called, traveller? \n")
