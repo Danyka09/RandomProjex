@@ -137,7 +137,7 @@ def attack(text="\nYou decided to attack", multiplier=1):
         enemy_hp += (effect * multiplier)
     print(f"You rolled {roll}")
     time.sleep(1)
-    print(f"The effect was {effect}. Your health is now {hp}. The enemies health is {enemy_hp}")
+    print(f"The effect was {effect * multiplier}. Your health is now {hp}. The enemies health is {enemy_hp}")
     if hp<=0:
         if at_boss:
             fight_loose()
@@ -268,7 +268,7 @@ def intro():
         time.sleep(5)
 
 def apollo():
-    global enemy_hp, special_score
+    global enemy_hp, special_score, hp
     enemy_hp = 100
 
     print("")
@@ -285,7 +285,8 @@ def apollo():
     speak("You take out your magic die and roll it on the floor. The crowd of people formed around you holds their breath.")
     
     attack("\nYou decided to attack", 1)
-    special_score += 100
+    if hp > 0:
+        special_score += 100
 
 
 def omicron():
@@ -305,7 +306,8 @@ def omicron():
     speak("However, do not be mistaken, they do not go easy on you. They strike a deal with you, if you defeat them, you get the gun, if they defeat you, they execute you like normal. You roll the dice.")
 
     attack("\nYou decided to attack", 1)
-    special_score += 100
+    if hp > 0:
+        special_score += 100
 
 def groverland(): # okay the story is mine but i made ai break it down and fix grammar cause a sentence with 80 words is crazy and it also changed some wording but i like it so it stays, original is in doc
     global enemy_hp, special_score, inventory
@@ -336,7 +338,8 @@ def groverland(): # okay the story is mine but i made ai break it down and fix g
     speak("As he stares you down, you roll your die.")
     
     attack("\nYou decided to attack", 1)
-    special_score += 100
+    if hp > 0:
+        special_score += 100
 
 
 def boss_fight():
@@ -354,7 +357,8 @@ def boss_fight():
     speak(f"You waltz into the Emperors palace and declare that you are ending this once and for all. Before Emperor {emperor} can say anything you roll the dice.")
 
     attack("\nYou decided to attack", 1)
-    special_score += 500
+    if hp > 0:
+        special_score += 500
 
 def fight_win():
     global emperor
@@ -375,12 +379,17 @@ def fight_loose():
     end_menu("")
 
 def enter_spaceship():
-    global hp, dice_total, special_score, start_time, at_boss, name
+    global hp, dice_total, special_score, start_time, at_boss, name, inventory
     hp = 100
     dice_total = 0
     special_score = 0
     start_time = time.time()
     at_boss = False
+    inventory = {
+        "arrows": 0,
+        "riptide": 0,
+        "lasergun": 0
+    }
     print(f"You decided to Enter the Spaceship ")
     time.sleep(1)
     name = input("What would you like to be called, traveller? \n")
