@@ -1,8 +1,10 @@
 # This is a choice based adventure game called "Planet Jumper:Mercy of Dice".
 # It is my first ever project made without  a tutorial
-# the first bit of code was written: 27.08.2025 and this project was finished: __.__.2025
-# A total of __hours and __minutes have been put in. 05:47:35(excluding the creative part)
+# the first bit of code was written: 27.08.2025 and this project was finished: 06.03.2026
+# A total of __hours and __minutes have been put in. 05:47:35(excluding the creative part) i stopped measuring like 10h ig
 #Take this with a grain of salt cause a lot of this was ai, but i understand it all i think except for the leaderboard.
+
+# dont mind the fact its been 7 months
 
 # MAKE LEADERBOARD INTO API????!!?!!!
 
