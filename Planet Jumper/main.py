@@ -76,9 +76,9 @@ def score_write():
 
 inventory = {
     # "heal": {"count": 3, "healing": 30},
-    "arrows": {"count": 0, "damage": 2},
-    "riptide": {"count": 0, "damage": 3, "healing": 10},
-    "lasergun": {"count": 0, "damage": 25}
+    "arrows": 0,
+    "riptide": 0,
+    "lasergun": 0
 }
 #1,2 is player taking damage, the rest is enemy taking damage
 roll_damage = {
@@ -123,16 +123,16 @@ def end_menu(Emperor):
         else:
             print("You don't have free will, choose one of the options above.")
 
-def attack():
+def attack(text="\nYou decided to attack", multiplier=1):
     global hp, enemy_hp
     roll = dice_roll()
-    print("\nYou decided to attack")
+    print(text)
     time.sleep(1)
     effect = roll_damage[roll]
     if roll<=2:
         hp += effect
     else:
-        enemy_hp += effect
+        enemy_hp += (effect * multiplier)
     print(f"You rolled {roll}")
     time.sleep(1)
     print(f"The effect was {effect}. Your health is now {hp}. The enemies health is {enemy_hp}")
@@ -153,7 +153,73 @@ def attack():
         turn()
 
 def items():
-    print()
+    global inventory, name
+    # okay we need a dynamic menu that doesnt show items unless the player has them
+    # i also need to code in the usage of items, checking if the user has them, dice, heals etc.
+    def bow():
+        global inventory
+        if inventory["arrows"] <= 0:
+            print(f"You have no arrows, {random_insult()}")
+            time.sleep(2)
+            items()
+        else:
+            inventory["arrows"] -= 1
+            attack("\nYou have decided to use your bow (It has double damage)", 2)
+    def lasergun():
+        global inventory, hp, enemy_hp
+        if inventory["lasergun"] <=0:
+            print(f"You are out of lasers, {random_insult()}")
+            time.sleep(2)
+            items()
+        else:
+            inventory["lasergun"] -= 1
+            print(f"\nYou have decided to use your Laser gun (it has damage of 25 but takes 5HP per use)")
+            time.sleep(1)
+            enemy_hp -= 25
+            hp -= 5
+            time.sleep(2)
+            print(f"The effect was -25. Your health is now {hp}. The enemies health is {enemy_hp}")
+            if hp <= 0:
+                if at_boss:
+                    fight_loose()
+                else:
+                    time.sleep(2)
+                    print(f"I though you'd last longer, {random_insult()}")
+                    score_write()
+                    end_menu("")
+            if enemy_hp <= 0:
+                time.sleep(2)
+                print("You won!")
+                hp = min(100, hp + 20)  # chooses the smallest number, so either 100 or whatever the value of hp + 30 is
+            else:
+                time.sleep(1)
+                turn()
+    def riptide():
+        global inventory, hp
+        if inventory["riptide"] <= 0:
+            print(f"You already used Riptide, {random_insult()}")
+            time.sleep(1)
+            items()
+        else:
+            inventory["riptide"] -= 1
+            hp += 10
+            attack("\nYou have decided to use Riptide (It triples your damage and heals you 10HP)", 3)
+
+    while True:
+        choices = {
+            "1": bow,
+            "2": lasergun,
+            "3": riptide,
+            "4": turn
+        }
+        print(f"\nWhat item do you want to use, {name}?")
+        print(f"\n  [1] Bow - {inventory["arrows"]}\n  [2] Laser gun - {inventory["lasergun"]}\n  [3] Riptide - {inventory["riptide"]}\n  [4] Return")
+        turn1 = input("\n Choose an option: ")
+        if turn1 in choices:
+            choices[turn1]()
+            break
+        else:
+            print("You don't have free will, choose one of the options above.")
 
 def intro():
     global emperor, name
@@ -205,13 +271,14 @@ def apollo():
     speak("You will need to fight.")
     speak("You take out your magic die and roll it on the floor. The crowd of people formed around you holds their breath.")
     
-    attack()
+    attack("\nYou decided to attack", 1)
     special_score += 100
 
 
 def omicron():
-    global enemy_hp, special_score
+    global enemy_hp, special_score, inventory
     enemy_hp = 150
+    inventory["arrows"] += 2
 
     print("")
     speak("Damn, you actually did it. I thought you'd die. Maybe I underestimated you. Good for you i guess...")
@@ -224,12 +291,13 @@ def omicron():
     speak("They do hate humans, but they hate the Emperor even more for limiting their expansion. They just hate all carbon-based life in general. ")
     speak("However, do not be mistaken, they do not go easy on you. They strike a deal with you, if you defeat them, you get the gun, if they defeat you, they execute you like normal. You roll the dice.")
 
-    attack()
+    attack("\nYou decided to attack", 1)
     special_score += 100
 
 def groverland(): # okay the story is mine but i made ai break it down and fix grammar cause a sentence with 80 words is crazy and it also changed some wording but i like it so it stays, original is in doc
-    global enemy_hp, special_score
+    global enemy_hp, special_score, inventory
     enemy_hp = 200
+    inventory["lasergun"] += 3
 
     print("")
     # Beat 1: The Transition
@@ -254,14 +322,15 @@ def groverland(): # okay the story is mine but i made ai break it down and fix g
     speak("Percy caps Riptide and pulls out his own dice; colored blue like the ocean with numbers faint yellow like sand.")
     speak("As he stares you down, you roll your die.")
     
-    attack()
+    attack("\nYou decided to attack", 1)
     special_score += 100
 
 
 def boss_fight():
-    global enemy_hp, emperor, special_score, at_boss
+    global enemy_hp, emperor, special_score, at_boss, inventory
     enemy_hp = 300
     at_boss = True
+    inventory["riptide"] += 1
 
     print("")
     speak("Percy looks up at you. He says: “I can’t believe it, this is the first time someone’s ever beaten me, but rules are rules, here is Riptide, hero. May the gods bless you and your journey to beat the Emperor.” ")
@@ -271,7 +340,7 @@ def boss_fight():
     speak("Because you are different, dare I say better, than all the Emperors before. You engage warp drive one last time, and within a short time you arrive at the center of the galaxy. ")
     speak(f"You waltz into the Emperors palace and declare that you are ending this once and for all. Before Emperor {emperor} can say anything you roll the dice.")
 
-    attack()
+    attack("\nYou decided to attack", 1)
     special_score += 500
 
 def fight_win():
