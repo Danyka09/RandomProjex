@@ -84,7 +84,7 @@ inventory = {
 roll_damage = {
     1: -20,
     2: -10,
-    3: -0,
+    3: -5,
     4: -10,
     5: -20,
     6: -30
@@ -147,7 +147,7 @@ def attack(text="\nYou decided to attack", multiplier=1):
     if enemy_hp<=0:
         time.sleep(2)
         print("You won!")
-        hp = min(100, hp + 20) # chooses the smallest number, so either 100 or whatever the value of hp + 30 is
+        hp = min(100, hp + 25) # chooses the smallest number, so either 100 or whatever the value of hp + 30 is
     else:
         time.sleep(1)
         turn()
@@ -156,6 +156,12 @@ def items():
     global inventory, name
     # okay we need a dynamic menu that doesnt show items unless the player has them
     # i also need to code in the usage of items, checking if the user has them, dice, heals etc.
+    text = {
+        "arrows": f"\n  [1] Bow = {inventory["arrows"]}",
+        "lasergun": f"\n  [2] Laser gun = {inventory["lasergun"]}",
+        "riptide": f"\n  [3] Riptide = {inventory["riptide"]}"
+    }
+
     def bow():
         global inventory
         if inventory["arrows"] <= 0:
@@ -202,7 +208,7 @@ def items():
             items()
         else:
             inventory["riptide"] -= 1
-            hp += 10
+            hp += 15
             attack("\nYou have decided to use Riptide (It triples your damage and heals you 10HP)", 3)
 
     while True:
@@ -213,7 +219,12 @@ def items():
             "4": turn
         }
         print(f"\nWhat item do you want to use, {name}?")
-        print(f"\n  [1] Bow - {inventory["arrows"]}\n  [2] Laser gun - {inventory["lasergun"]}\n  [3] Riptide - {inventory["riptide"]}\n  [4] Return")
+        for i in inventory:
+            if inventory[i] > 0:
+                print(text[i])
+            else:
+                continue
+        print("\n  [4] Return")
         turn1 = input("\n Choose an option: ")
         if turn1 in choices:
             choices[turn1]()
