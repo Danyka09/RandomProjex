@@ -1,7 +1,7 @@
 # This is a choice based adventure game called "Planet Jumper:Mercy of Dice".
 # It is my first ever project made without  a tutorial
 # the first bit of code was written: 27.08.2025 and this project was finished: 06.03.2026
-# A total of __hours and __minutes have been put in. 05:47:35(excluding the creative part) i stopped measuring like 10h ig
+# A total of __hours and __minutes have been put in. 05:47:35(excluding the creative part) i stopped measuring, like 10h ig
 #Take this with a grain of salt cause a lot of this was ai, but i understand it all i think except for the leaderboard.
 
 # dont mind the fact its been 7 months
@@ -16,7 +16,7 @@ try:
         leaderboard = json.load(f)
         sort = sorted(leaderboard, key=lambda x: x["score"], reverse=True)[:1]
         emperor = (sort[0]["name"]) if sort else "Zlorg" # i dont understand the if sort else "Zlorg" part but whatever was easy to make; the sorting was just copied from the leaderboard
-except (FileNotFoundError, json.JSONDecodeError):
+except (FileNotFoundError, json.JSONDecodeError):       # okay so python consideres an empty list false so if sort means if its true and if it is it returns the name, if not it goes to else which is "Zlorg"
     leaderboard = []
     emperor = "Zlorg"
 
